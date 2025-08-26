@@ -1,248 +1,270 @@
 # CodeCraft Studio
 
-<img src="./assets/Claudable_main.png" alt="CodeCraft Studio" style="border-radius: 12px; width: 100%;" />
 <div align="center">
-<h3>Connect Claude Code. Build what you want. Deploy instantly.</h3>
+  <img src="./assets/codecraft_logo_web3.svg" alt="CodeCraft Studio Logo" width="400" height="120" />
+  <h1>CodeCraft Studio</h1>
+  <p><strong>AI-Powered Web App Builder with Next-Gen Web3 Aesthetic</strong></p>
 
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+  [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+  [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-Latest-teal.svg)](https://fastapi.tiangolo.com/)
+  [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 </div>
-<p align="center">
-<a href="https://discord.gg/NJNbafHNQC">
-<img src="https://img.shields.io/badge/Discord-Join%20Community-7289da?style=flat&logo=discord&logoColor=white" alt="Join Discord Community">
-</a>
-<a href="https://opactor.ai">
-<img src="https://img.shields.io/badge/OPACTOR-Website-000000?style=flat&logo=web&logoColor=white" alt="OPACTOR Website">
-</a>
-<a href="https://twitter.com/aaron_xong">
-<img src="https://img.shields.io/badge/Follow-@aaron__xong-000000?style=flat&logo=x&logoColor=white" alt="Follow Aaron">
-</a>
-</p>
 
-## What is CodeCraft Studio?
+## Overview
 
-CodeCraft Studio is a powerful Next.js-based web app builder that combines advanced **Code** **Craft**ing capabilities through AI agent integration. Leveraging Claude Code and Cursor CLI support, it provides an intuitive app building experience with transformative development workflow. Just describe your app idea - "I want a task management app with dark mode" - and watch as CodeCraft Studio instantly generates the code and shows you a live preview of your working app. You can deploy your app to Vercel and integrate database with Supabase for free.
+CodeCraft Studio is a revolutionary AI-powered web application builder that transforms natural language descriptions into production-ready Next.js applications. Featuring a modern Web3-inspired design, comprehensive documentation, and seamless integrations, it provides developers with an intuitive way to create, preview, and deploy web applications using advanced AI capabilities.
 
-This open-source project empowers you to build and deploy professional web applications easily for **free**.
+## ✨ Key Features
 
-How to start? Simply login to Claude Code (or Cursor CLI), start CodeCraft Studio, and describe what you want to build. That's it. There is no additional subscription cost for app builder.
+### 🤖 **AI-Driven Development**
+- **Multi-Agent Support**: Integrated with Claude Code, Cursor Agent, and Windsurf Editor
+- **Natural Language to Code**: Describe your app ideas in plain English and watch them transform into working applications
+- **Real-time AI Assistance**: Interactive chat interface with thinking mode for continuous development guidance
+- **Smart Code Generation**: Advanced AI agents that understand context and generate production-ready code
 
-## Features
-<img src="./assets/Claudable_short.gif" alt="Claudable Demo" style="width: 100%; max-width: 800px;">
+### 🎨 **Modern Web3-Inspired Design**
+- **Futuristic Aesthetic**: Hexagonal network patterns, holographic gradients, and animated elements
+- **Dark Mode Support**: Seamless light/dark theme switching with beautiful transitions
+- **Transformative Teal Theme**: Modern color palette with purple-to-cyan Web3 gradients
+- **Interactive UI**: Smooth animations, hover effects, and responsive design
 
-- **Shell-Level Performance**: Leverage the full power of Claude Code and Cursor CLI Agent capabilities with native MCP support
-- **Natural Language to Code**: Simply describe what you want to build, and CodeCraft Studio generates production-ready Next.js code
-- **Instant Preview**: See your changes immediately with hot-reload as AI builds your app
-- **Zero Setup, Instant Launch**: No complex sandboxes, no API key, no database headaches - just start building immediately
-- **Beautiful UI**: Generate beautiful UI with Tailwind CSS and shadcn/ui, styled with transformative teal branding
-- **Dark Mode Support**: Built-in theme toggle for comfortable coding in any lighting condition
-- **Deploy to Vercel**: Push your app live with a single click, no configuration needed
-- **GitHub Integration**: Automatic version control and continuous deployment setup
-- **Supabase Database**: Connect production PostgreSQL with authentication ready to use
-- **Automated Error Detection**: Detect errors in your app and fix them automatically
+### 🚀 **Developer Experience**
+- **Live Preview**: Instant hot-reload previews with desktop and mobile viewport modes
+- **VS Code-Style Editor**: Built-in file explorer with syntax highlighting for 50+ languages
+- **Comprehensive Documentation**: Notion-like documentation at `/docs` with interactive examples
+- **WebSocket Communication**: Real-time bidirectional updates between frontend and backend
 
-## Technology Stack
-**AI Cooding Agent:**
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code/setup)**: Advanced AI coding agent. We strongly recommend you to use Claude Code for the best experience.
-  ```bash
-  # Install
-  npm install -g @anthropic-ai/claude-code
-  # Login
-  claude  # then > /login
-  ```
-- **[Cursor CLI](https://docs.cursor.com/en/cli/overview)**: Intelligent coding agent for complex coding tasks. It's little bit slower than Claude Code, but it's more powerful.
-  ```bash
-  # Install
-  curl https://cursor.com/install -fsS | bash
-  # Login
-  cursor-agent login
-  ```
+### 🌐 **Deployment & Integration**
+- **One-Click Publishing**: Deploy to Vercel with automatic GitHub integration
+- **Service Integrations**: GitHub, Vercel, and Supabase with encrypted token storage
+- **Automated Workflows**: Push to GitHub → Deploy to Vercel → Live URL generation
+- **Environment Management**: Automatic port detection and configuration
 
-**Database & Deployment:**
-- **[Supabase](https://supabase.com/)**: Connect production-ready PostgreSQL database directly to your project.
-- **[Vercel](https://vercel.com/)**: Publish your work immediately with one-click deployment
+### 🛠 **Advanced Architecture**
+- **Next.js 15**: Built with App Router, React Server Components, and proper params handling
+- **FastAPI Backend**: High-performance Python API with WebSocket support and terminal UI
+- **Monorepo Structure**: Clean separation with pnpm workspaces
+- **Type Safety**: Full TypeScript coverage with Zod validation
 
-**There is no additional subscription cost and built just for YOU.**
+## 📁 Project Structure
 
-## Prerequisites
+```
+code-craft-studio/
+├── apps/
+│   ├── api/                    # FastAPI Backend
+│   │   ├── app/
+│   │   │   ├── api/           # API routes (chat, projects, services)
+│   │   │   ├── core/          # Terminal UI, crypto utilities
+│   │   │   ├── models/        # SQLAlchemy database models
+│   │   │   ├── services/      # Claude Code integration, Git ops
+│   │   │   ├── prompt/        # System prompts for AI agents
+│   │   │   └── main.py        # FastAPI application entry
+│   │   └── requirements.txt
+│   └── web/                   # Next.js Frontend
+│       ├── app/              # App Router pages (/docs, /[project_id])
+│       ├── components/       # React components (chat, settings, logo)
+│       ├── hooks/           # Custom hooks (WebSocket, theme)
+│       ├── contexts/        # Theme provider and global state
+│       └── public/          # Static assets (Web3 logos)
+├── data/                     # SQLite database and generated projects
+├── scripts/                  # Development and build scripts
+├── CLAUDE.md                # Project instructions for Claude Code
+└── package.json             # Root workspace configuration
+```
 
-Before you begin, ensure you have the following installed:
-- Node.js 18+
-- Python 3.10+
-- Claude Code or Cursor CLI (already logged in)
-- Git
+## 🚀 Quick Start
 
-## Quick Start
+### Prerequisites
 
-Get CodeCraft Studio running on your local machine in minutes:
+- **Node.js 18+** and **pnpm** - Package management
+- **Python 3.8+** - Backend runtime  
+- **AI Agent**: Claude Code, Cursor, or Windsurf Editor
+- **Git** - Version control
+
+### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/opactorai/CodeCraft-Studio.git
-cd CodeCraft-Studio
+git clone <repository-url>
+cd code-craft-studio
 
-# Install all dependencies (Node.js and Python)
+# Install all dependencies (Node.js + Python)
 pnpm install
 
 # Start development servers
 pnpm run dev
 ```
 
-Your application will be available at:
-- Frontend: http://localhost:3000
-- API Server: http://localhost:8080
-- API Documentation: http://localhost:8080/docs
+**Access Points:**
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8080
+- **Documentation**: http://localhost:3000/docs
+- **API Docs**: http://localhost:8080/docs
 
-**Note**: Ports are automatically detected. If the default ports are in use, the next available ports will be assigned.
+## 🛠 Development Commands
 
-## Setup
-
-### Manual Setup
-You can also manually setup the project.
 ```bash
-# Frontend setup
+# Development
+pnpm run dev                    # Start both frontend and backend
+pnpm run dev:web               # Start Next.js frontend only
+pnpm run dev:api               # Start FastAPI backend only
+
+# Frontend-specific (from apps/web/)
 cd apps/web
-pnpm install
+pnpm run build                 # Build Next.js app for production
+pnpm run start                 # Start production server
 
-# Backend setup
-cd ../api
-python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+# Database Management
+pnpm run db:backup             # Create SQLite database backup
+pnpm run db:reset              # Reset database to initial state
+
+# Maintenance
+pnpm run clean                 # Remove dependencies and virtual environments
 ```
 
-The `pnpm install` command automatically handles the complete setup:
+## 🎨 New Features & Improvements
 
-1. **Port Configuration**: Detects available ports and creates `.env` files
-2. **Node.js Dependencies**: Installs packages including workspace dependencies
-3. **Python Environment**: Creates virtual environment in `apps/api/.venv`
-4. **Python Dependencies**: Installs packages using `uv` (if available) or `pip`
-5. **Database Setup**: SQLite database auto-creates at `data/cc.db` on first run
+### **Web3-Inspired Branding**
+- **New Logo Design**: Hexagonal network structure with holographic gradients
+- **Animated Elements**: Floating particles, rotating hexagons, and shimmer effects
+- **Modern Color Palette**: Purple-to-cyan gradients with transformative teal accents
 
-### Additional Commands
+### **Enhanced User Experience**
+- **Dark Mode Toggle**: Available in General Settings with smooth transitions
+- **Documentation Portal**: Comprehensive `/docs` page with Notion-like design
+- **Interactive Code Blocks**: Copy-to-clipboard functionality with visual feedback
+- **Search Functionality**: Quick navigation through documentation sections
+
+### **Technical Improvements**
+- **Next.js 15 Compatibility**: Proper async params handling with `React.use()`
+- **Terminal UI System**: Beautiful ASCII logo and logging for backend services
+- **Enhanced Error Handling**: Better error boundaries and user feedback
+- **Type Safety**: Improved TypeScript coverage and validation
+
+## 🔧 Configuration & Setup
+
+### AI Agent Configuration
+
+Configure your preferred AI agent in **Settings → AI Agents**:
+
+1. **Claude Code** - Advanced reasoning and code generation
+2. **Cursor Agent** - AI-powered code editor integration  
+3. **Windsurf Editor** - Next-generation IDE with AI
+
+### Service Integrations
+
+#### GitHub Integration
 ```bash
-pnpm run db:backup   # Create a backup of your SQLite database
-                     # Use when: Before major changes or deployments
-                     # Creates: data/backups/cc_backup_[timestamp].db
-
-pnpm run db:reset    # Reset database to initial state
-                     # Use when: Need fresh start or corrupted data
-                     # Warning: This will delete all your data!
-
-pnpm run clean       # Remove all dependencies and virtual environments
-                     # Use when: Dependencies conflict or need fresh install
-                     # Removes: node_modules/, apps/api/.venv/, pnpm-lock.yaml
-                     # After running: pnpm install to reinstall everything
+# 1. Generate token at: https://github.com/settings/tokens
+# 2. Add token in Settings → Service Integrations → GitHub
+# 3. Connect project repository in Project Settings
 ```
 
-## Usage
-
-### Getting Started with Development
-
-1. **Connect Claude Code**: Link your Claude Code CLI to enable AI assistance
-2. **Describe Your Project**: Use natural language to describe what you want to build
-3. **AI Generation**: Watch as the AI generates your project structure and code
-4. **Live Preview**: See changes instantly with hot reload functionality
-5. **Deploy**: Push to production with Vercel integration
-
-### API Development
-
-Access the interactive API documentation at http://localhost:8080/docs to explore available endpoints and test API functionality.
-
-### Database Operations
-
-CodeCraft Studio uses SQLite for local development and can be configured for PostgreSQL in production. The database automatically initializes on first run.
-
-## Troubleshooting
-
-### Port Already in Use
-
-The application automatically finds available ports. Check the `.env` file to see which ports were assigned.
-
-### Installation Failures
-
+#### Vercel Deployment
 ```bash
-# Clean all dependencies and retry
-pnpm run clean
-pnpm install
+# 1. Get token from: https://vercel.com/account/tokens
+# 2. Add token in Settings → Service Integrations → Vercel
+# 3. Click "Publish" to deploy with GitHub integration
 ```
 
-### Permission Errors (macOS/Linux)
-
-If you encounter permission errors:
+#### Supabase Database
 ```bash
-cd apps/api
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+# 1. Get credentials from Supabase Dashboard → Settings → API
+# 2. Configure Project URL and API keys in Settings
+# 3. Enable authentication and real-time features
 ```
 
-### Claude Code Permission Issues (Windows/WSL)
+## 📚 Documentation
 
-If you encounter the error: `Error output dangerously skip permissions cannot be used which is root sudo privileges for security reasons`
+Visit `/docs` for comprehensive documentation including:
 
-**Solution:**
-1. Do not run Claude Code with `sudo` or as root user
-2. Ensure proper file ownership in WSL:
-   ```bash
-   # Check current user
-   whoami
+- **Getting Started** - Installation and first project
+- **Core Features** - AI agents, live preview, code editor
+- **Integrations** - GitHub, Vercel, Supabase setup
+- **API Reference** - REST endpoints and WebSocket connections
+- **Troubleshooting** - Common issues and solutions
 
-   # Change ownership of project directory to current user
-   sudo chown -R $(whoami):$(whoami) ~/CodeCraft-Studio
-   ```
-3. If using WSL, make sure you're running Claude Code from your user account, not root
-4. Verify Claude Code installation permissions:
-   ```bash
-   # Reinstall Claude Code without sudo
-   npm install -g @anthropic-ai/claude-code --unsafe-perm=false
-   ```
+## 🏗 Architecture Deep Dive
 
-## Integration Guide
+### Backend Services (`apps/api/app/`)
 
-### GitHub
-**Get Token:** [GitHub Personal Access Tokens](https://github.com/settings/tokens) → Generate new token (classic) → Select `repo` scope
+- **`core/terminal_ui.py`** - ASCII logo and clean terminal interface
+- **`services/claude_act.py`** - Multi-agent AI integration
+- **`api/chat/`** - Real-time WebSocket chat functionality
+- **`api/projects/`** - Project lifecycle management
+- **`services/git_ops.py`** - Git operations and version control
 
-**Connect:** Settings → Service Integrations → GitHub → Enter token → Create or connect repository
+### Frontend Architecture (`apps/web/`)
 
-### Vercel
-**Get Token:** [Vercel Account Settings](https://vercel.com/account/tokens) → Create Token
+- **`app/docs/`** - Notion-like documentation portal
+- **`components/CodeCraftLogo.tsx`** - Animated Web3-inspired logo component
+- **`components/settings/GeneralSettings.tsx`** - Theme toggle and project settings
+- **`hooks/useUserRequests.ts`** - Request tracking and management
+- **`contexts/ThemeProvider.tsx`** - Dark/light mode management
 
-**Connect:** Settings → Service Integrations → Vercel → Enter token → Create new project for deployment
+### Data Flow & State Management
 
-### Supabase
-**Get Credentials:** [Supabase Dashboard](https://supabase.com/dashboard) → Your Project → Settings → API
-- Project URL: `https://xxxxx.supabase.co`
-- Anon Key: Public key for client-side
-- Service Role Key: Secret key for server-side
+1. **User Interaction** - Natural language input through chat interface
+2. **AI Processing** - Multi-agent system processes and generates code
+3. **Real-time Updates** - WebSocket communication for live feedback  
+4. **Code Generation** - Projects stored in `data/projects/{id}/repo/`
+5. **Live Preview** - Hot-reload development server integration
+6. **Deployment Pipeline** - GitHub → Vercel → Live URL
 
-## Design Comparison
+## 🔍 Troubleshooting
 
-*Same prompt, different results*
+### Common Issues
 
-### CodeCraft Studio
-<img src="./assets/Claudable_ex.png" alt="CodeCraft Studio Design" style="border-radius: 12px; width: 100%;" />
+**Params Warning (Next.js 15)**
+- Fixed: Proper `React.use()` implementation for async params
 
-[View CodeCraft Studio Live Demo →](https://codecraft-studio-preview.vercel.app/)
+**Port Conflicts**
+```bash
+# Ports auto-detected, check .env files for assignments
+lsof -ti:3000 | xargs kill -9  # Kill port 3000
+lsof -ti:8080 | xargs kill -9  # Kill port 8080
+```
 
-### Lovable
-<img src="./assets/Lovable_ex.png" alt="Lovable Design" style="border-radius: 12px; width: 100%;" />
+**AI Agent Connection**
+- Ensure your AI agent (Claude Code, Cursor, etc.) is installed and logged in
+- Check Settings → AI Agents for connection status
+- Verify API keys and permissions
 
-[View Lovable Live Demo →](https://preview--goal-track-studio.lovable.app/)
+**Preview Server Issues**
+- Stop and restart preview server
+- Clear browser cache
+- Check console for WebSocket connection errors
 
-## License
+## 🤝 Contributing
 
-MIT License.
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Follow TypeScript and Python best practices
+4. Test both frontend and backend changes
+5. Update documentation if needed
+6. Commit with descriptive messages
+7. Push to branch and open Pull Request
 
-## Upcoming Features
-These features are in development and will be opened soon.
-- **New CLI Agents** - Trust us, you're going to LOVE this!
-- **Checkpoints for Chat** - Save and restore conversation/codebase states
-- **Advanced MCP Integration** - Native integration with MCP
-- **Enhanced Agent System** - Subagents, AGENTS.md integration
-- **Website Cloning** - You can start a project from a reference URL.
-- Various bug fixes and community PR merges
+## 📄 License
 
-We're working hard to deliver the features you've been asking for. Stay tuned!
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Star History
+## 🔮 Future Roadmap
 
-[![Star History Chart](https://api.star-history.com/svg?repos=opactorai/CodeCraft-Studio&type=Date)](https://www.star-history.com/#opactorai/CodeCraft-Studio&Date)
+- **🎯 Enhanced AI Capabilities** - Multi-modal AI with image understanding
+- **🌐 Web3 Integration** - Smart contract deployment and blockchain features  
+- **📱 Mobile App Support** - React Native project generation
+- **🔌 Plugin System** - Extensible architecture with community plugins
+- **👥 Collaboration Features** - Real-time multi-user development
+- **🚀 Advanced Deployment** - Kubernetes, AWS, and custom hosting options
+
+---
+
+<div align="center">
+  <p>Built with ❤️ for the future of development</p>
+  <p><strong>Transform your ideas into reality with AI-powered Web3 development</strong></p>
+  
+  [📖 Documentation](http://localhost:3000/docs) • [🚀 Get Started](#quick-start) • [💬 Discord](https://discord.gg/codecraft)
+</div>

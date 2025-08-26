@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, use } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { MotionDiv, MotionH3, MotionP, MotionButton } from '../../../lib/motion';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -10,6 +10,7 @@ import { VscJson } from 'react-icons/vsc';
 import ChatLog from '../../../components/ChatLog';
 import { ProjectSettings } from '../../../components/settings/ProjectSettings';
 import ChatInput from '../../../components/chat/ChatInput';
+import { CodeCraftLogo } from '../../../components/CodeCraftLogo';
 import { useUserRequests } from '../../../hooks/useUserRequests';
 
 // 더 이상 ProjectSettings을 로드하지 않음 (메인 페이지에서 글로벌 설정으로 관리)
@@ -17,7 +18,7 @@ import { useUserRequests } from '../../../hooks/useUserRequests';
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080';
 
 type Entry = { path: string; type: 'file'|'dir'; size?: number };
-type Params = { params: { project_id: string } };
+type Params = { params: Promise<{ project_id: string }> };
 type ProjectStatus = 'initializing' | 'active' | 'failed';
 
 // TreeView component for VSCode-style file explorer
@@ -39,7 +40,7 @@ function TreeView({ entries, selectedFile, expandedFolders, folderContents, onTo
   if (!entries || !Array.isArray(entries)) {
     return null;
   }
-  
+
   // Group entries by directory
   const sortedEntries = [...entries].sort((a, b) => {
     // Directories first
@@ -56,13 +57,13 @@ function TreeView({ entries, selectedFile, expandedFolders, folderContents, onTo
         const fullPath = entry.path;
         const isExpanded = expandedFolders.has(fullPath);
         const indent = level * 8;
-        
+
         return (
           <div key={fullPath}>
             <div
               className={`group flex items-center h-[22px] px-2 cursor-pointer ${
-                selectedFile === fullPath 
-                  ? 'bg-blue-100 dark:bg-[#094771]' 
+                selectedFile === fullPath
+                  ? 'bg-blue-100 dark:bg-[#094771]'
                   : 'hover:bg-gray-100 dark:hover:bg-[#1a1a1a]'
               }`}
               style={{ paddingLeft: `${8 + indent}px` }}
@@ -81,23 +82,23 @@ function TreeView({ entries, selectedFile, expandedFolders, folderContents, onTo
               {/* Chevron for folders */}
               <div className="w-4 flex items-center justify-center mr-0.5">
                 {entry.type === 'dir' && (
-                  isExpanded ? 
-                    <span className="w-2.5 h-2.5 text-gray-600 dark:text-[#8b8b8b] flex items-center justify-center"><FaChevronDown size={10} /></span> : 
+                  isExpanded ?
+                    <span className="w-2.5 h-2.5 text-gray-600 dark:text-[#8b8b8b] flex items-center justify-center"><FaChevronDown size={10} /></span> :
                     <span className="w-2.5 h-2.5 text-gray-600 dark:text-[#8b8b8b] flex items-center justify-center"><FaChevronRight size={10} /></span>
                 )}
               </div>
-              
+
               {/* Icon */}
               <span className="w-4 h-4 flex items-center justify-center mr-1.5">
                 {entry.type === 'dir' ? (
-                  isExpanded ? 
-                    <span className="text-amber-600 dark:text-[#c09553] w-4 h-4 flex items-center justify-center"><FaFolderOpen size={16} /></span> : 
+                  isExpanded ?
+                    <span className="text-amber-600 dark:text-[#c09553] w-4 h-4 flex items-center justify-center"><FaFolderOpen size={16} /></span> :
                     <span className="text-amber-600 dark:text-[#c09553] w-4 h-4 flex items-center justify-center"><FaFolder size={16} /></span>
                 ) : (
                   getFileIcon(entry)
                 )}
               </span>
-              
+
               {/* File/Folder name */}
               <span className={`text-[13px] leading-[22px] ${
                 selectedFile === fullPath ? 'text-blue-700 dark:text-white' : 'text-gray-700 dark:text-[#cccccc]'
@@ -105,7 +106,7 @@ function TreeView({ entries, selectedFile, expandedFolders, folderContents, onTo
                 {level === 0 ? (entry.path.split('/').pop() || entry.path) : (entry.path.split('/').pop() || entry.path)}
               </span>
             </div>
-            
+
             {/* Render children if expanded */}
             {entry.type === 'dir' && isExpanded && folderContents.has(fullPath) && (
               <TreeView
@@ -129,10 +130,11 @@ function TreeView({ entries, selectedFile, expandedFolders, folderContents, onTo
 }
 
 export default function ChatPage({ params }: Params) {
-  const projectId = params.project_id;
+  const unwrappedParams = use(params);
+  const projectId = unwrappedParams.project_id;
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // ★ NEW: UserRequests 상태 관리
   const {
     hasActiveRequests,
@@ -140,7 +142,7 @@ export default function ChatPage({ params }: Params) {
     startRequest,
     completeRequest
   } = useUserRequests({ projectId });
-  
+
   const [projectName, setProjectName] = useState<string>('');
   const [projectDescription, setProjectDescription] = useState<string>('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -201,11 +203,11 @@ export default function ChatPage({ params }: Params) {
         const connections = await response.json();
         const githubConnection = connections.find((conn: any) => conn.provider === 'github');
         const vercelConnection = connections.find((conn: any) => conn.provider === 'vercel');
-        
+
         // Check actual project connections (not just token existence)
         setGithubConnected(!!githubConnection);
         setVercelConnected(!!vercelConnection);
-        
+
         // Set published URL only if actually deployed
         if (vercelConnection && vercelConnection.service_data) {
           const sd = vercelConnection.service_data;
@@ -262,19 +264,19 @@ export default function ChatPage({ params }: Params) {
     if (deployPollRef.current) clearInterval(deployPollRef.current);
     setDeploymentStatus('deploying');
     setDeploymentId(depId);
-    
+
     console.log('🔍 Monitoring deployment:', depId);
-    
+
     deployPollRef.current = setInterval(async () => {
       try {
         const r = await fetch(`${API_BASE}/api/projects/${projectId}/vercel/deployment/current`);
         if (!r.ok) return;
         const data = await r.json();
-        
+
         // 진행 중인 배포가 없으면 폴링 중단 (완료됨)
         if (!data.has_deployment) {
           console.log('🔍 Deployment completed - no active deployment');
-          
+
           // 최종 배포 URL 설정
           if (data.last_deployment_url) {
             const url = String(data.last_deployment_url).startsWith('http') ? data.last_deployment_url : `https://${data.last_deployment_url}`;
@@ -284,60 +286,60 @@ export default function ChatPage({ params }: Params) {
           } else {
             setDeploymentStatus('idle');
           }
-          
+
           // End publish loading state (중요: 배포가 없어도 loading 해제)
           setPublishLoading(false);
-          
+
           if (deployPollRef.current) {
             clearInterval(deployPollRef.current);
             deployPollRef.current = null;
           }
           return;
         }
-        
+
         // 진행 중인 배포가 있는 경우
         const status = data.status;
-        
+
         // Log only status changes
         if (status && status !== 'QUEUED') {
           console.log('🔍 Deployment status:', status);
         }
-        
+
         // Check if deployment is ready or failed
         const isReady = status === 'READY';
         const isBuilding = status === 'BUILDING' || status === 'QUEUED';
         const isError = status === 'ERROR';
-        
+
         if (isError) {
           console.error('🔍 Deployment failed:', status);
           setDeploymentStatus('error');
-          
+
           // End publish loading state
           setPublishLoading(false);
-          
+
           // Close publish panel after error (with delay to show error message)
           setTimeout(() => {
             setShowPublishPanel(false);
           }, 3000); // Show error for 3 seconds before closing
-          
+
           if (deployPollRef.current) {
             clearInterval(deployPollRef.current);
             deployPollRef.current = null;
           }
           return;
         }
-        
+
         if (isReady && data.deployment_url) {
           const url = String(data.deployment_url).startsWith('http') ? data.deployment_url : `https://${data.deployment_url}`;
           console.log('🔍 Deployment complete! URL:', url);
           setPublishedUrl(url);
           setDeploymentStatus('ready');
-          
+
           // End publish loading state
           setPublishLoading(false);
-          
+
           // Keep panel open to show the published URL
-          
+
           if (deployPollRef.current) {
             clearInterval(deployPollRef.current);
             deployPollRef.current = null;
@@ -355,11 +357,11 @@ export default function ChatPage({ params }: Params) {
     try {
       setIsStartingPreview(true);
       setPreviewInitializationMessage('Starting development server...');
-      
+
       // Simulate progress updates
       setTimeout(() => setPreviewInitializationMessage('Installing dependencies...'), 1000);
       setTimeout(() => setPreviewInitializationMessage('Building your application...'), 2500);
-      
+
       const r = await fetch(`${API_BASE}/api/projects/${projectId}/preview/start`, { method: 'POST' });
       if (!r.ok) {
         console.error('Failed to start preview:', r.statusText);
@@ -368,7 +370,7 @@ export default function ChatPage({ params }: Params) {
         return;
       }
       const data = await r.json();
-      
+
       setPreviewInitializationMessage('Preview ready!');
       setTimeout(() => {
         setPreviewUrl(data.url);
@@ -394,14 +396,14 @@ export default function ChatPage({ params }: Params) {
     try {
       const r = await fetch(`${API_BASE}/api/repo/${projectId}/tree?dir=${encodeURIComponent(dir)}`);
       const data = await r.json();
-      
+
       // Ensure data is an array
       if (Array.isArray(data)) {
         setTree(data);
-        
+
         // Load contents for all directories in the root
         const newFolderContents = new Map();
-        
+
         // Process each directory
         for (const entry of data) {
           if (entry.type === 'dir') {
@@ -413,13 +415,13 @@ export default function ChatPage({ params }: Params) {
             }
           }
         }
-        
+
         setFolderContents(newFolderContents);
       } else {
         console.error('Tree data is not an array:', data);
         setTree([]);
       }
-      
+
       setCurrentPath(dir);
     } catch (error) {
       console.error('Failed to load tree:', error);
@@ -445,7 +447,7 @@ export default function ChatPage({ params }: Params) {
     setFolderContents(prev => {
       const newMap = new Map(prev);
       newMap.set(path, contents);
-      
+
       // Also load nested directories
       for (const entry of contents) {
         if (entry.type === 'dir') {
@@ -458,7 +460,7 @@ export default function ChatPage({ params }: Params) {
           }
         }
       }
-      
+
       return newMap;
     });
   }
@@ -479,19 +481,19 @@ export default function ChatPage({ params }: Params) {
   // Build tree structure from flat list
   function buildTreeStructure(entries: Entry[]): Map<string, Entry[]> {
     const structure = new Map<string, Entry[]>();
-    
+
     // Initialize with root
     structure.set('', []);
-    
+
     entries.forEach(entry => {
       const parts = entry.path.split('/');
       const parentPath = parts.slice(0, -1).join('/');
-      
+
       if (!structure.has(parentPath)) {
         structure.set(parentPath, []);
       }
       structure.get(parentPath)?.push(entry);
-      
+
       // If it's a directory, ensure it exists in the structure
       if (entry.type === 'dir') {
         if (!structure.has(entry.path)) {
@@ -499,21 +501,21 @@ export default function ChatPage({ params }: Params) {
         }
       }
     });
-    
+
     return structure;
   }
 
   async function openFile(path: string) {
     try {
       const r = await fetch(`${API_BASE}/api/repo/${projectId}/file?path=${encodeURIComponent(path)}`);
-      
+
       if (!r.ok) {
         console.error('Failed to load file:', r.status, r.statusText);
         setContent('// Failed to load file content');
         setSelectedFile(path);
         return;
       }
-      
+
       const data = await r.json();
       setContent(data.content || '');
       setSelectedFile(path);
@@ -526,7 +528,7 @@ export default function ChatPage({ params }: Params) {
 
   // Lazy load highlight.js only when needed
   const [hljs, setHljs] = useState<any>(null);
-  
+
   useEffect(() => {
     if (selectedFile && !hljs) {
       import('highlight.js/lib/common').then(mod => {
@@ -615,17 +617,17 @@ export default function ChatPage({ params }: Params) {
     if (entry.type === 'dir') {
       return <span className="text-blue-500"><FaFolder size={16} /></span>;
     }
-    
+
     const ext = entry.path.split('.').pop()?.toLowerCase();
     const filename = entry.path.split('/').pop()?.toLowerCase();
-    
+
     // Special files
     if (filename === 'package.json') return <span className="text-green-600"><VscJson size={16} /></span>;
     if (filename === 'dockerfile') return <span className="text-blue-400"><FaDocker size={16} /></span>;
     if (filename?.startsWith('.env')) return <span className="text-yellow-500"><FaLock size={16} /></span>;
     if (filename === 'readme.md') return <span className="text-gray-600"><FaMarkdown size={16} /></span>;
     if (filename?.includes('config')) return <span className="text-gray-500"><FaCog size={16} /></span>;
-    
+
     switch (ext) {
       case 'tsx':
         return <span className="text-cyan-400"><FaReact size={16} /></span>;
@@ -713,7 +715,7 @@ export default function ChatPage({ params }: Params) {
         const project = await r.json();
         setProjectName(project.name || `Project ${projectId.slice(0, 8)}`);
         setProjectDescription(project.description || '');
-        
+
         // Check if project has initial prompt
         if (project.initial_prompt) {
           setHasInitialPrompt(true);
@@ -726,7 +728,7 @@ export default function ChatPage({ params }: Params) {
 
         // Check initial project status and handle initial prompt
         const initialPromptFromUrl = searchParams?.get('initial_prompt');
-        
+
         if (project.status === 'initializing') {
           setProjectStatus('initializing');
           setIsInitializing(true);
@@ -734,14 +736,14 @@ export default function ChatPage({ params }: Params) {
         } else {
           setProjectStatus('active');
           setIsInitializing(false);
-          
+
           // 프로젝트가 이미 active 상태면 즉시 의존성 설치 시작
           startDependencyInstallation();
-          
+
           // Initial prompt: trigger once with shared guard (handles active-on-load case)
           triggerInitialPromptIfNeeded();
         }
-        
+
         // Always load the file tree after getting project info
         await loadTree('.')
       } else {
@@ -772,7 +774,7 @@ export default function ChatPage({ params }: Params) {
       Array.from(files).forEach(file => {
         if (file.type.startsWith('image/')) {
           const url = URL.createObjectURL(file);
-          
+
           // Convert to base64
           const reader = new FileReader();
           reader.onload = (e) => {
@@ -805,27 +807,27 @@ export default function ChatPage({ params }: Params) {
       alert('작업 내용을 입력하거나 이미지를 업로드해주세요.');
       return;
     }
-    
+
     // Chat Mode일 때 추가 지시사항 추가
     if (mode === 'chat') {
       finalMessage = finalMessage + "\n\nDo not modify code, only answer to the user's request.";
     }
-    
-    // If this is not an initial prompt and user is running a new task, 
+
+    // If this is not an initial prompt and user is running a new task,
     // ensure the preview button is not blocked
     if (!hasInitialPrompt || agentWorkComplete) {
       // This is a subsequent task, not the initial one
       // Don't block the preview button for subsequent tasks
     }
-    
+
     setIsRunning(true);
-    
+
     // ★ NEW: request_id 생성
     const requestId = crypto.randomUUID();
-    
+
     try {
-      const requestBody = { 
-        instruction: finalMessage, 
+      const requestBody = {
+        instruction: finalMessage,
         images: uploadedImages.map(img => ({
           name: img.name,
           base64_data: img.base64.split(',')[1], // Remove data:image/...;base64, prefix
@@ -834,39 +836,39 @@ export default function ChatPage({ params }: Params) {
         is_initial_prompt: false, // Mark as continuation message
         request_id: requestId // ★ NEW: request_id 추가
       };
-      
-      
+
+
       // Use different endpoint based on mode
       const endpoint = mode === 'act' ? 'act' : 'chat';
-      const r = await fetch(`${API_BASE}/api/chat/${projectId}/${endpoint}`, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(requestBody) 
+      const r = await fetch(`${API_BASE}/api/chat/${projectId}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
       });
-      
-      
+
+
       if (!r.ok) {
         const errorText = await r.text();
         console.error('❌ API Error:', errorText);
         alert(`오류: ${errorText}`);
         return;
       }
-      
+
       const result = await r.json();
-      
+
       // ★ NEW: UserRequest 생성
       createRequest(requestId, result.session_id, finalMessage, mode);
-      
+
       // 완료 후 데이터 새로고침
       await loadTree('.');
-      
+
       // 프롬프트 및 업로드된 이미지들 초기화
       setPrompt('');
       uploadedImages.forEach(img => {
         URL.revokeObjectURL(img.url);
       });
       setUploadedImages([]);
-      
+
     } catch (error) {
       console.error('Act 실행 오류:', error);
       alert(`실행 중 오류가 발생했습니다: ${error}`);
@@ -879,28 +881,28 @@ export default function ChatPage({ params }: Params) {
   // Handle project status updates via callback from ChatLog
   const handleProjectStatusUpdate = (status: string, message?: string) => {
     const previousStatus = projectStatus;
-    
+
     // 상태가 같다면 무시 (중복 방지)
     if (previousStatus === status) {
       return;
     }
-    
+
     setProjectStatus(status as ProjectStatus);
     if (message) {
       setInitializationMessage(message);
     }
-    
+
     // If project becomes active, stop showing loading UI
     if (status === 'active') {
       setIsInitializing(false);
-      
+
       // initializing → active 전환인 경우에만 처리
       if (previousStatus === 'initializing') {
-        
+
         // 의존성 설치 시작
         startDependencyInstallation();
       }
-      
+
       // Initial prompt: trigger once with shared guard (handles active-via-WS case)
       triggerInitialPromptIfNeeded();
     } else if (status === 'failed') {
@@ -911,12 +913,12 @@ export default function ChatPage({ params }: Params) {
   // Function to start dependency installation in background
   const startDependencyInstallation = async () => {
     try {
-      
+
       const response = await fetch(`${API_BASE}/api/projects/${projectId}/install-dependencies`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
-      
+
       if (response.ok) {
         const result = await response.json();
       } else {
@@ -934,53 +936,53 @@ export default function ChatPage({ params }: Params) {
     if (initialPromptSent) {
       return;
     }
-    
+
     // Reset task complete state for new initial prompt
     setAgentWorkComplete(false);
     localStorage.setItem(`project_${projectId}_taskComplete`, 'false');
-    
+
     // ★ NEW: request_id 생성
     const requestId = crypto.randomUUID();
-    
+
     // No need to add project structure info here - backend will add it for the AI agent
-    
+
     try {
       setIsRunning(true);
       setInitialPromptSent(true); // 전송 시작 시점에 바로 설정
-      
-      const requestBody = { 
+
+      const requestBody = {
         instruction: initialPrompt,
         images: [], // No images for initial prompt
         is_initial_prompt: true, // Mark as initial prompt
         request_id: requestId // ★ NEW: request_id 추가
       };
-      
-      const r = await fetch(`${API_BASE}/api/chat/${projectId}/act`, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(requestBody) 
+
+      const r = await fetch(`${API_BASE}/api/chat/${projectId}/act`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
       });
-      
+
       if (!r.ok) {
         const errorText = await r.text();
         console.error('❌ API Error:', errorText);
         setInitialPromptSent(false); // 실패하면 다시 시도할 수 있도록
         return;
       }
-      
+
       const result = await r.json();
-      
+
       // ★ NEW: UserRequest 생성 (display original prompt, not enhanced)
       createRequest(requestId, result.session_id, initialPrompt, 'act');
-      
+
       // Clear the prompt input after sending
       setPrompt('');
-      
+
       // Clean up URL by removing the initial_prompt parameter
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.delete('initial_prompt');
       window.history.replaceState({}, '', newUrl.toString());
-      
+
     } catch (error) {
       console.error('Error sending initial prompt:', error);
       setInitialPromptSent(false); // 실패하면 다시 시도할 수 있도록
@@ -993,12 +995,12 @@ export default function ChatPage({ params }: Params) {
     setProjectStatus('initializing');
     setIsInitializing(true);
     setInitializationMessage('Retrying project initialization...');
-    
+
     try {
       const response = await fetch(`${API_BASE}/api/projects/${projectId}/retry-initialization`, {
         method: 'POST'
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to retry initialization');
       }
@@ -1014,7 +1016,7 @@ export default function ChatPage({ params }: Params) {
     if (typeof window !== 'undefined' && projectId) {
       const storedHasInitialPrompt = localStorage.getItem(`project_${projectId}_hasInitialPrompt`);
       const storedTaskComplete = localStorage.getItem(`project_${projectId}_taskComplete`);
-      
+
       if (storedHasInitialPrompt !== null) {
         setHasInitialPrompt(storedHasInitialPrompt === 'true');
       }
@@ -1026,73 +1028,73 @@ export default function ChatPage({ params }: Params) {
 
   // ★ NEW: 활성 요청 상태에 따른 preview 서버 자동 제어
   const previousActiveState = useRef(false);
-  
+
   useEffect(() => {
     // Task 시작 시 - preview 서버 중지
     if (hasActiveRequests && previewUrl) {
       console.log('🔄 Auto-stopping preview server due to active request');
       stop();
     }
-    
+
     // Task 완료 시 - preview 서버 자동 시작
     if (previousActiveState.current && !hasActiveRequests && !previewUrl) {
       console.log('✅ Task completed, auto-starting preview server');
       start();
     }
-    
+
     previousActiveState.current = hasActiveRequests;
   }, [hasActiveRequests, previewUrl]);
 
-  useEffect(() => { 
+  useEffect(() => {
     let mounted = true;
     let timer: NodeJS.Timeout | null = null;
-    
+
     const initializeChat = async () => {
       if (!mounted) return;
-      
+
       // Load settings first
       await loadSettings();
-      
+
       // Load project info first to check status
       await loadProjectInfo();
-      
+
       // Always load the file tree regardless of project status
       await loadTree('.');
-      
+
       // Only set initializing to false if project is active
       if (projectStatus === 'active') {
         setIsInitializing(false);
       }
     };
-    
+
     initializeChat();
     loadDeployStatus().then(() => {
       // 배포 상태 로드 후 진행 중인 배포 확인
       checkCurrentDeployment();
     });
-    
+
     // Listen for service updates from Settings
     const handleServicesUpdate = () => {
       loadDeployStatus();
     };
-    
+
     // Cleanup function to stop preview server when page is unloaded
     const handleBeforeUnload = () => {
       // Send a request to stop the preview server
       navigator.sendBeacon(`${API_BASE}/api/projects/${projectId}/preview/stop`);
     };
-    
+
     window.addEventListener('beforeunload', handleBeforeUnload);
     window.addEventListener('services-updated', handleServicesUpdate);
-    
+
     return () => {
       mounted = false;
       if (timer) clearTimeout(timer);
-      
+
       // Clean up event listeners
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('services-updated', handleServicesUpdate);
-      
+
       // Stop preview server when component unmounts
       if (previewUrl) {
         fetch(`${API_BASE}/api/projects/${projectId}/preview/stop`, { method: 'POST' })
@@ -1112,49 +1114,49 @@ export default function ChatPage({ params }: Params) {
           background: #f9fafb !important;
           color: #374151 !important;
         }
-        
+
         .hljs-punctuation,
         .hljs-bracket,
         .hljs-operator {
           color: #1f2937 !important;
           font-weight: 600 !important;
         }
-        
+
         .hljs-built_in,
         .hljs-keyword {
           color: #7c3aed !important;
           font-weight: 600 !important;
         }
-        
+
         .hljs-string {
           color: #059669 !important;
         }
-        
+
         .hljs-number {
           color: #dc2626 !important;
         }
-        
+
         .hljs-comment {
           color: #6b7280 !important;
           font-style: italic;
         }
-        
+
         .hljs-function,
         .hljs-title {
           color: #2563eb !important;
           font-weight: 600 !important;
         }
-        
+
         .hljs-variable,
         .hljs-attr {
           color: #dc2626 !important;
         }
-        
+
         .hljs-tag,
         .hljs-name {
           color: #059669 !important;
         }
-        
+
         /* Make parentheses, brackets, and braces more visible */
         .hljs-punctuation:is([data-char="("], [data-char=")"], [data-char="["], [data-char="]"], [data-char="{"], [data-char="}"]) {
           color: #1f2937 !important;
@@ -1163,46 +1165,46 @@ export default function ChatPage({ params }: Params) {
           border-radius: 2px;
           padding: 0 1px;
         }
-        
+
         /* Dark mode overrides */
         .dark .hljs {
           background: #374151 !important;
           color: #f9fafb !important;
         }
-        
+
         .dark .hljs-punctuation,
         .dark .hljs-bracket,
         .dark .hljs-operator {
           color: #f9fafb !important;
         }
-        
+
         .dark .hljs-built_in,
         .dark .hljs-keyword {
           color: #a78bfa !important;
         }
-        
+
         .dark .hljs-string {
           color: #34d399 !important;
         }
-        
+
         .dark .hljs-number {
           color: #f87171 !important;
         }
-        
+
         .dark .hljs-comment {
           color: #9ca3af !important;
         }
-        
+
         .dark .hljs-function,
         .dark .hljs-title {
           color: #60a5fa !important;
         }
-        
+
         .dark .hljs-variable,
         .dark .hljs-attr {
           color: #f87171 !important;
         }
-        
+
         .dark .hljs-tag,
         .dark .hljs-name {
           color: #34d399 !important;
@@ -1219,7 +1221,7 @@ export default function ChatPage({ params }: Params) {
             {/* 채팅 헤더 */}
             <div className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4 h-[73px] flex items-center">
               <div className="flex items-center gap-3">
-                <button 
+                <button
                   onClick={() => router.back()}
                   className="flex items-center justify-center w-8 h-8 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                   title="Back to projects"
@@ -1238,11 +1240,11 @@ export default function ChatPage({ params }: Params) {
                 </div>
               </div>
             </div>
-            
+
             {/* 채팅 로그 영역 */}
             <div className="flex-1 min-h-0">
-              <ChatLog 
-                projectId={projectId} 
+              <ChatLog
+                projectId={projectId}
                 onSessionStatusChange={(isRunningValue) => {
                   console.log('🔍 [DEBUG] Session status change:', isRunningValue);
                   setIsRunning(isRunningValue);
@@ -1260,15 +1262,15 @@ export default function ChatPage({ params }: Params) {
                 completeRequest={completeRequest}
               />
             </div>
-            
+
             {/* 간단한 입력 영역 */}
             <div className="p-4 rounded-bl-2xl">
-              <ChatInput 
+              <ChatInput
                 onSendMessage={(message) => {
                   runAct(message);
                 }}
                 disabled={isRunning}
-                placeholder={mode === 'act' ? "Ask Claudable..." : "Chat with Claudable..."}
+                placeholder={mode === 'act' ? "Ask CodeCraft..." : "Chat with CodeCraft..."}
                 mode={mode}
                 onModeChange={setMode}
                 projectId={projectId}
@@ -1290,8 +1292,8 @@ export default function ChatPage({ params }: Params) {
                   <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
                     <button
                       className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                        showPreview 
-                          ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white' 
+                        showPreview
+                          ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'
                           : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                       }`}
                       onClick={() => setShowPreview(true)}
@@ -1300,8 +1302,8 @@ export default function ChatPage({ params }: Params) {
                     </button>
                     <button
                       className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                        !showPreview 
-                          ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white' 
+                        !showPreview
+                          ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'
                           : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                       }`}
                       onClick={() => setShowPreview(false)}
@@ -1309,7 +1311,7 @@ export default function ChatPage({ params }: Params) {
                       <span className="w-4 h-4 flex items-center justify-center"><FaCode size={16} /></span>
                     </button>
                   </div>
-                  
+
                   {/* Preview Controls */}
                   {showPreview && (
                     <div className="flex items-center gap-2">
@@ -1319,8 +1321,8 @@ export default function ChatPage({ params }: Params) {
                           <button
                             aria-label="Desktop preview"
                             className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                              deviceMode === 'desktop' 
-                                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white' 
+                              deviceMode === 'desktop'
+                                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                             onClick={() => setDeviceMode('desktop')}
@@ -1330,8 +1332,8 @@ export default function ChatPage({ params }: Params) {
                           <button
                             aria-label="Mobile preview"
                             className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
-                              deviceMode === 'mobile' 
-                                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white' 
+                              deviceMode === 'mobile'
+                                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'
                                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                             }`}
                             onClick={() => setDeviceMode('mobile')}
@@ -1340,17 +1342,17 @@ export default function ChatPage({ params }: Params) {
                           </button>
                         </div>
                       )}
-                      
+
                       {previewUrl ? (
                         <>
-                          <button 
+                          <button
                             className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                             onClick={stop}
                           >
                             <span className="w-3 h-3 flex items-center justify-center"><FaStop size={12} /></span>
                             Stop
                           </button>
-                          <button 
+                          <button
                             className="p-1.5 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
                             onClick={() => {
                               const iframe = document.querySelector('iframe');
@@ -1367,17 +1369,17 @@ export default function ChatPage({ params }: Params) {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   {/* Settings Button */}
-                  <button 
+                  <button
                     onClick={() => setShowGlobalSettings(true)}
                     className="p-2 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
                     title="Settings"
                   >
                     <span className="w-4 h-4 flex items-center justify-center"><FaCog size={16} /></span>
                   </button>
-                  
+
                   {/* Publish/Update */}
                   {showPreview && previewUrl && (
                     <div className="relative">
@@ -1399,7 +1401,7 @@ export default function ChatPage({ params }: Params) {
                     {showPublishPanel && (
                       <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 p-5">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Publish Project</h3>
-                        
+
                         {/* Deployment Status Display */}
                         {deploymentStatus === 'deploying' && (
                           <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -1410,28 +1412,28 @@ export default function ChatPage({ params }: Params) {
                             <p className="text-xs text-blue-600 dark:text-blue-300">Building and deploying your project. This may take a few minutes.</p>
                           </div>
                         )}
-                        
+
                         {deploymentStatus === 'ready' && publishedUrl && (
                           <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                             <p className="text-sm font-medium text-green-700 dark:text-green-400 mb-2">Currently published at:</p>
-                            <a 
-                              href={publishedUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
+                            <a
+                              href={publishedUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="text-sm text-green-600 dark:text-green-300 font-mono hover:underline break-all"
                             >
                               {publishedUrl}
                             </a>
                           </div>
                         )}
-                        
+
                         {deploymentStatus === 'error' && (
                           <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                             <p className="text-sm font-medium text-red-700 dark:text-red-400 mb-2">Deployment failed</p>
                             <p className="text-xs text-red-600 dark:text-red-300">There was an error during deployment. Please try again.</p>
                           </div>
                         )}
-                        
+
                         <div className="space-y-4">
                           {!githubConnected || !vercelConnected ? (
                             <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
@@ -1455,7 +1457,7 @@ export default function ChatPage({ params }: Params) {
                                 )}
                               </div>
                               <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-                                Go to 
+                                Go to
                                 <button
                                   onClick={() => {
                                     setShowPublishPanel(false);
@@ -1469,12 +1471,12 @@ export default function ChatPage({ params }: Params) {
                               </p>
                             </div>
                           ) : null}
-                          
+
                           <button
                             disabled={publishLoading || deploymentStatus === 'deploying' || !githubConnected || !vercelConnected}
                             onClick={async () => {
                               console.log('🚀 Publish started');
-                              
+
                               setPublishLoading(true);
                               try {
                                 // Push to GitHub
@@ -1485,11 +1487,11 @@ export default function ChatPage({ params }: Params) {
                                   console.error('🚀 GitHub push failed:', errorText);
                                   throw new Error(errorText);
                                 }
-                                
+
                                 // Deploy to Vercel
                                 console.log('🚀 Deploying to Vercel...');
                                 const deployUrl = `${API_BASE}/api/projects/${projectId}/vercel/deploy`;
-                                
+
                                 const vercelRes = await fetch(deployUrl, {
                                   method: 'POST',
                                   headers: { 'Content-Type': 'application/json' },
@@ -1502,14 +1504,14 @@ export default function ChatPage({ params }: Params) {
                                 if (vercelRes.ok) {
                                   const data = await vercelRes.json();
                                   console.log('🚀 Deployment started, polling for status...');
-                                  
+
                                   // Set deploying status BEFORE ending publishLoading to prevent gap
                                   setDeploymentStatus('deploying');
-                                  
+
                                   if (data.deployment_id) {
                                     startDeploymentPolling(data.deployment_id);
                                   }
-                                  
+
                                   // Only set URL if deployment is already ready
                                   if (data.ready && data.deployment_url) {
                                     const url = data.deployment_url.startsWith('http') ? data.deployment_url : `https://${data.deployment_url}`;
@@ -1538,17 +1540,17 @@ export default function ChatPage({ params }: Params) {
                               }
                             }}
                             className={`w-full px-4 py-3 rounded-lg font-medium text-white transition-colors ${
-                              publishLoading || deploymentStatus === 'deploying' || !githubConnected || !vercelConnected 
-                                ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' 
+                              publishLoading || deploymentStatus === 'deploying' || !githubConnected || !vercelConnected
+                                ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
                                 : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
                             }`}
                           >
-                            {publishLoading 
-                              ? 'Publishing...' 
+                            {publishLoading
+                              ? 'Publishing...'
                               : deploymentStatus === 'deploying'
                               ? 'Deploying...'
-                              : !githubConnected || !vercelConnected 
-                              ? 'Connect Services First' 
+                              : !githubConnected || !vercelConnected
+                              ? 'Connect Services First'
                               : deploymentStatus === 'ready' && publishedUrl ? 'Update' : 'Publish'
                             }
                           </button>
@@ -1559,7 +1561,7 @@ export default function ChatPage({ params }: Params) {
                   )}
                 </div>
               </div>
-              
+
               {/* Content Area */}
               <div className="flex-1 relative bg-black overflow-hidden">
                 <AnimatePresence mode="wait">
@@ -1573,14 +1575,14 @@ export default function ChatPage({ params }: Params) {
                   >
                 {previewUrl ? (
                   <div className="relative w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                    <div 
+                    <div
                       className={`bg-white dark:bg-gray-900 ${
-                        deviceMode === 'mobile' 
-                          ? 'w-[375px] h-[667px] rounded-[25px] border-8 border-gray-800 shadow-2xl' 
+                        deviceMode === 'mobile'
+                          ? 'w-[375px] h-[667px] rounded-[25px] border-8 border-gray-800 shadow-2xl'
                           : 'w-full h-full'
                       } overflow-hidden`}
                     >
-                      <iframe 
+                      <iframe
                         className="w-full h-full border-none bg-white dark:bg-gray-800"
                         src={previewUrl}
                       onError={() => {
@@ -1594,9 +1596,9 @@ export default function ChatPage({ params }: Params) {
                         if (overlay) overlay.style.display = 'none';
                       }}
                     />
-                    
+
                     {/* Error overlay */}
-                    <div 
+                    <div
                       id="iframe-error-overlay"
                       className="absolute inset-0 bg-gray-50 dark:bg-gray-900 flex items-center justify-center z-10"
                       style={{ display: 'none' }}
@@ -1633,23 +1635,22 @@ export default function ChatPage({ params }: Params) {
                 ) : (
                   <div className="h-full w-full flex items-center justify-center bg-gray-50 dark:bg-black">
                     {isStartingPreview ? (
-                      <MotionDiv 
+                      <MotionDiv
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="text-center"
                       >
-                        {/* Claudable Symbol */}
-                        <img 
-                          src="/Claudable_simbol.png" 
-                          alt="Claudable" 
-                          className="w-40 h-40 opacity-90 object-contain mx-auto mb-8"
+                        {/* Code Craft Studio Logo */}
+                        <CodeCraftLogo
+                          className="w-40 h-40 opacity-90 mx-auto mb-8"
+                          animated={true}
                         />
-                        
+
                         {/* Content */}
                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                           Starting Preview Server
                         </h3>
-                        
+
                         <div className="flex items-center justify-center gap-1 text-gray-600 dark:text-gray-400">
                           <span>{previewInitializationMessage}</span>
                           <MotionDiv
@@ -1692,32 +1693,30 @@ export default function ChatPage({ params }: Params) {
                                 style={{ transformOrigin: "center center" }}
                                 className="w-full h-full"
                               >
-                                <img 
-                                  src="/Claudable_simbol.png" 
-                                  alt="Claudable" 
-                                  className="w-full h-full opacity-80 object-contain"
+                                <CodeCraftLogo
+                                  className="w-full h-full opacity-80"
+                                  animated={true}
                                 />
                               </MotionDiv>
                             </div>
-                            
+
                             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                               Building...
                             </h3>
                           </>
                         ) : (
                           <>
-                            <img 
-                              src="/Claudable_simbol.png" 
-                              alt="Claudable" 
-                              className="w-40 h-40 opacity-80 object-contain mx-auto mb-6"
+                            <CodeCraftLogo
+                              className="w-40 h-40 opacity-80 mx-auto mb-6"
+                              animated={true}
                             />
-                            
+
                             <MotionButton
                               onClick={!isRunning ? start : undefined}
-                              className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium mb-6 transition-all duration-300 
-                                bg-gray-900 dark:bg-white text-white dark:text-gray-900 
+                              className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium mb-6 transition-all duration-300
+                                bg-gray-900 dark:bg-white text-white dark:text-gray-900
                                 shadow-md hover:shadow-lg"
-                              whileHover={{ 
+                              whileHover={{
                                 scale: 1.03,
                               }}
                               whileTap={{ scale: 0.98 }}
@@ -1728,13 +1727,13 @@ export default function ChatPage({ params }: Params) {
                             </MotionButton>
                           </>
                         )}
-                        
+
                         {!hasActiveRequests && (
                           <>
                             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                               Preview Not Running
                             </h3>
-                            
+
                             <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
                               Start your development server to see live changes
                             </p>
@@ -1763,7 +1762,7 @@ export default function ChatPage({ params }: Params) {
                         No files found
                       </div>
                     ) : (
-                      <TreeView 
+                      <TreeView
                         entries={tree || []}
                         selectedFile={selectedFile}
                         expandedFolders={expandedFolders}
@@ -1793,7 +1792,7 @@ export default function ChatPage({ params }: Params) {
                             <span className="text-[13px] text-gray-700 dark:text-[#cccccc]" style={{ fontFamily: "'Segoe UI', Tahoma, sans-serif" }}>
                               {selectedFile.split('/').pop()}
                             </span>
-                            <button 
+                            <button
                               className="text-gray-700 dark:text-[#cccccc] hover:bg-gray-200 dark:hover:bg-[#383838] ml-2 px-1 rounded"
                               onClick={() => {
                                 setSelectedFile('');
@@ -1822,7 +1821,7 @@ export default function ChatPage({ params }: Params) {
                           {/* Code Content */}
                           <div className="flex-1 overflow-auto custom-scrollbar">
                             <pre className="p-4 text-[13px] leading-[19px] font-mono text-gray-800 dark:text-[#d4d4d4] whitespace-pre" style={{ fontFamily: "'Fira Code', 'Consolas', 'Monaco', monospace" }}>
-                              <code 
+                              <code
                                 className={`language-${getFileLanguage(selectedFile)}`}
                                 dangerouslySetInnerHTML={{
                                   __html: hljs && content ? hljs.highlight(content, { language: getFileLanguage(selectedFile) }).value : (content || '')
@@ -1856,7 +1855,7 @@ export default function ChatPage({ params }: Params) {
           </div>
         </div>
       </div>
-      
+
 
       {/* Project Settings Modal */}
       <ProjectSettings

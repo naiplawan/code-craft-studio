@@ -814,7 +814,7 @@ export default function HomePage() {
               <div className="text-center mb-12">
                 <div className="flex justify-center mb-6">
                   <Image
-                    src="/codecraft_logo_white.svg"
+                    src="/codecraft_logo_white_web3.svg"
                     alt="CodeCraft Studio"
                     width={400}
                     height={120}
@@ -822,7 +822,7 @@ export default function HomePage() {
                     priority
                   />
                   <Image
-                    src="/codecraft_logo.svg"
+                    src="/codecraft_logo_web3.svg"
                     alt="CodeCraft Studio"
                     width={400}
                     height={120}

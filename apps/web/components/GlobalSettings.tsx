@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { AnimatePresence } from 'framer-motion';
 import { MotionDiv } from '@/lib/motion';
 import { useTheme } from '@/components/ThemeProvider';
 import ServiceConnectionModal from '@/components/ServiceConnectionModal';
 import { FaCog } from 'react-icons/fa';
+import { CodeCraftLogo } from './CodeCraftLogo';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080';
 
@@ -156,7 +158,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
   const loadAllTokens = async () => {
     const providers = ['github', 'supabase', 'vercel'];
     const newTokens: { [key: string]: ServiceToken | null } = {};
-    
+
     for (const provider of providers) {
       try {
         const response = await fetch(`${API_BASE}/api/tokens/${provider}`);
@@ -169,7 +171,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
         newTokens[provider] = null;
       }
     }
-    
+
     setTokens(newTokens);
   };
 
@@ -203,7 +205,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
       checkingStatus[cli.id] = { installed: false, checking: true };
     });
     setCLIStatus(checkingStatus);
-    
+
     try {
       const response = await fetch(`${API_BASE}/api/settings/cli-status`);
       if (response.ok) {
@@ -240,33 +242,33 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
   const saveGlobalSettings = async () => {
     setIsLoading(true);
     setSaveMessage(null);
-    
+
     try {
       const response = await fetch(`${API_BASE}/api/settings/global`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(globalSettings)
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to save settings');
       }
-      
-      setSaveMessage({ 
-        type: 'success', 
-        text: 'Settings saved successfully!' 
+
+      setSaveMessage({
+        type: 'success',
+        text: 'Settings saved successfully!'
       });
-      
+
       // Clear message after 3 seconds
       setTimeout(() => setSaveMessage(null), 3000);
-      
+
     } catch (error) {
       console.error('Failed to save global settings:', error);
-      setSaveMessage({ 
-        type: 'error', 
-        text: 'Failed to save settings. Please try again.' 
+      setSaveMessage({
+        type: 'error',
+        text: 'Failed to save settings. Please try again.'
       });
-      
+
       // Clear error message after 5 seconds
       setTimeout(() => setSaveMessage(null), 5000);
     } finally {
@@ -278,7 +280,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
   const setDefaultCLI = (cliId: string) => {
     const cliInstalled = cliStatus[cliId]?.installed;
     if (!cliInstalled) return;
-    
+
     setGlobalSettings(prev => ({
       ...prev,
       default_cli: cliId
@@ -335,12 +337,12 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div 
+        <div
           className="absolute inset-0 bg-black/60 backdrop-blur-md"
           onClick={onClose}
         />
-        
-        <MotionDiv 
+
+        <MotionDiv
           className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-5xl h-[700px] border border-gray-200 dark:border-gray-700 flex flex-col"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -431,7 +433,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                     </button>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Preferences</h3>
                   <div className="space-y-3">
@@ -445,7 +447,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                         <div className="w-11 h-6 bg-white dark:bg-gray-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#DE7356]"></div>
                       </label>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700">
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Show file extensions</p>
@@ -473,7 +475,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                   <div className="flex items-center gap-3">
                     {saveMessage && (
                       <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm ${
-                        saveMessage.type === 'success' 
+                        saveMessage.type === 'success'
                           ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400'
                           : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
                       }`}>
@@ -510,7 +512,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                 {/* Global Settings */}
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-4">
                   <h4 className="font-medium text-gray-900 dark:text-white">Global Preferences</h4>
-                  
+
                   <div>
                     {/* Default CLI Selection */}
                     <div>
@@ -606,7 +608,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                       </div>
                     );
                   })}
-                  
+
                   {/* Show not installed CLIs separately */}
                   {CLI_OPTIONS.filter(cli => {
                     const status = cliStatus[cli.id];
@@ -693,7 +695,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
                     Configure your API tokens for external services. These tokens are stored encrypted and used across all projects.
                   </p>
-                  
+
                   <div className="space-y-4">
                     {Object.entries(tokens).map(([provider, token]) => (
                       <div key={provider} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -714,7 +716,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                             </p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
                           {token && (
                             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
@@ -729,7 +731,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700">
                     <div className="flex">
                       <div className="flex-shrink-0">
@@ -743,7 +745,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                         </h3>
                         <div className="mt-2 text-sm text-gray-700 dark:text-gray-300">
                           <p>
-                            Tokens configured here will be available for all projects. To connect a project to specific repositories 
+                            Tokens configured here will be available for all projects. To connect a project to specific repositories
                             and services, use the Project Settings in each individual project.
                           </p>
                         </div>
@@ -758,24 +760,23 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-4">
-                    <img 
-                      src="/Claudable_simbol.png" 
-                      alt="Claudable Symbol" 
-                      className="w-full h-full object-contain"
+                    <CodeCraftLogo
+                      className="w-full h-full"
+                      animated={true}
                     />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Claudable</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Code Craft Studio</h3>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">Version 1.0.0</p>
                 </div>
-                
+
                 <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
                   <div className="text-center">
                     <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                      Claudable is an AI-powered development platform that integrates with GitHub, Supabase, and Vercel 
+                      CodeCraft Studio is an AI-powered development platform that integrates with GitHub, Supabase, and Vercel
                       to streamline your web development workflow.
                     </p>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 text-center">
                     <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                       <p className="text-xs text-gray-600 dark:text-gray-400">Fast Deploy</p>
@@ -789,9 +790,9 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
                 <div className="text-center text-sm text-gray-600 dark:text-gray-400 space-y-2">
                   <p>Built with love for developers</p>
                   <div className="flex justify-center gap-4">
-                    <a href="#" className="text-[#DE7356] hover:text-[#c95940] transition-colors">Documentation</a>
-                    <a href="#" className="text-[#DE7356] hover:text-[#c95940] transition-colors">GitHub</a>
-                    <a href="#" className="text-[#DE7356] hover:text-[#c95940] transition-colors">Support</a>
+                    <Link href="/docs" className="text-[#DE7356] hover:text-[#c95940] transition-colors">Documentation</Link>
+                    <a href="https://github.com/yourusername/code-craft-studio" target="_blank" rel="noopener noreferrer" className="text-[#DE7356] hover:text-[#c95940] transition-colors">GitHub</a>
+                    <a href="mailto:support@codecraft.studio" className="text-[#DE7356] hover:text-[#c95940] transition-colors">Support</a>
                   </div>
                 </div>
               </div>
@@ -799,7 +800,7 @@ export default function GlobalSettings({ isOpen, onClose, initialTab = 'general'
           </div>
         </MotionDiv>
       </div>
-      
+
       {/* Service Connection Modal */}
       {selectedProvider && (
         <ServiceConnectionModal

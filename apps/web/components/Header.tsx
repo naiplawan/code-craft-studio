@@ -41,7 +41,7 @@ export default function Header() {
             )}
             <div className="h-8">
               <Image 
-                src="/codecraft_logo_white.svg"
+                src="/codecraft_logo_white_web3.svg"
                 alt="CodeCraft Studio"
                 width={400}
                 height={120}
@@ -49,7 +49,7 @@ export default function Header() {
                 priority
               />
               <Image 
-                src="/codecraft_logo.svg"
+                src="/codecraft_logo_web3.svg"
                 alt="CodeCraft Studio"
                 width={400}
                 height={120}

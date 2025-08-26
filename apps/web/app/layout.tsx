@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'CodeCraft Studio',
   description: 'CodeCraft Studio - AI-Powered Web App Builder',
   icons: {
-    icon: '/codecraft_logo.svg',
+    icon: '/codecraft_logo_web3.svg',
   },
 }
 
