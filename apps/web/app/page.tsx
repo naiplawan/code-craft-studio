@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import CreateProjectModal from '@/components/CreateProjectModal';
 import DeleteProjectModal from '@/components/DeleteProjectModal';
 import GlobalSettings from '@/components/GlobalSettings';
-import Image from 'next/image';
 import { Image as ImageIcon } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
@@ -812,23 +811,205 @@ export default function HomePage() {
           <div className="flex-1 flex items-center justify-center p-8">
             <div className="w-full max-w-4xl">
               <div className="text-center mb-12">
-                <div className="flex justify-center mb-6">
-                  <Image
-                    src="/codecraft_logo_white_web3.svg"
-                    alt="CodeCraft Studio"
-                    width={400}
-                    height={120}
-                    className="h-20 w-auto dark:block hidden"
-                    priority
-                  />
-                  <Image
-                    src="/codecraft_logo_web3.svg"
-                    alt="CodeCraft Studio"
-                    width={400}
-                    height={120}
-                    className="h-20 w-auto block dark:hidden"
-                    priority
-                  />
+                <div className="flex justify-center items-center mb-6">
+                  <svg width="800" height="120" viewBox="0 0 800 120" className="text-gray-900 dark:text-white">
+                    <defs>
+                      <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="currentColor" stopOpacity="1"/>
+                        <stop offset="50%" stopColor="#14B8A6" stopOpacity="0.8"/>
+                        <stop offset="100%" stopColor="currentColor" stopOpacity="1"/>
+                      </linearGradient>
+                    </defs>
+                    <g fill="url(#logoGradient)" transform="translate(100, 0)">
+                      {/* Row 1: C O D E C R A F T */}
+                      {/* C */}
+                      <rect x="20" y="10" width="8" height="8"/>
+                      <rect x="28" y="10" width="8" height="8"/>
+                      <rect x="36" y="10" width="8" height="8"/>
+                      <rect x="20" y="18" width="8" height="8"/>
+                      <rect x="20" y="26" width="8" height="8"/>
+                      <rect x="20" y="34" width="8" height="8"/>
+                      <rect x="20" y="42" width="8" height="8"/>
+                      <rect x="28" y="42" width="8" height="8"/>
+                      <rect x="36" y="42" width="8" height="8"/>
+                      
+                      {/* O */}
+                      <rect x="60" y="10" width="8" height="8"/>
+                      <rect x="68" y="10" width="8" height="8"/>
+                      <rect x="76" y="10" width="8" height="8"/>
+                      <rect x="60" y="18" width="8" height="8"/>
+                      <rect x="76" y="18" width="8" height="8"/>
+                      <rect x="60" y="26" width="8" height="8"/>
+                      <rect x="76" y="26" width="8" height="8"/>
+                      <rect x="60" y="34" width="8" height="8"/>
+                      <rect x="76" y="34" width="8" height="8"/>
+                      <rect x="60" y="42" width="8" height="8"/>
+                      <rect x="68" y="42" width="8" height="8"/>
+                      <rect x="76" y="42" width="8" height="8"/>
+                      
+                      {/* D */}
+                      <rect x="100" y="10" width="8" height="8"/>
+                      <rect x="108" y="10" width="8" height="8"/>
+                      <rect x="116" y="10" width="8" height="8"/>
+                      <rect x="100" y="18" width="8" height="8"/>
+                      <rect x="124" y="18" width="8" height="8"/>
+                      <rect x="100" y="26" width="8" height="8"/>
+                      <rect x="124" y="26" width="8" height="8"/>
+                      <rect x="100" y="34" width="8" height="8"/>
+                      <rect x="124" y="34" width="8" height="8"/>
+                      <rect x="100" y="42" width="8" height="8"/>
+                      <rect x="108" y="42" width="8" height="8"/>
+                      <rect x="116" y="42" width="8" height="8"/>
+                      
+                      {/* E */}
+                      <rect x="148" y="10" width="8" height="8"/>
+                      <rect x="156" y="10" width="8" height="8"/>
+                      <rect x="164" y="10" width="8" height="8"/>
+                      <rect x="148" y="18" width="8" height="8"/>
+                      <rect x="148" y="26" width="8" height="8"/>
+                      <rect x="156" y="26" width="8" height="8"/>
+                      <rect x="148" y="34" width="8" height="8"/>
+                      <rect x="148" y="42" width="8" height="8"/>
+                      <rect x="156" y="42" width="8" height="8"/>
+                      <rect x="164" y="42" width="8" height="8"/>
+                      
+                      {/* C */}
+                      <rect x="188" y="10" width="8" height="8"/>
+                      <rect x="196" y="10" width="8" height="8"/>
+                      <rect x="204" y="10" width="8" height="8"/>
+                      <rect x="188" y="18" width="8" height="8"/>
+                      <rect x="188" y="26" width="8" height="8"/>
+                      <rect x="188" y="34" width="8" height="8"/>
+                      <rect x="188" y="42" width="8" height="8"/>
+                      <rect x="196" y="42" width="8" height="8"/>
+                      <rect x="204" y="42" width="8" height="8"/>
+                      
+                      {/* R */}
+                      <rect x="228" y="10" width="8" height="8"/>
+                      <rect x="236" y="10" width="8" height="8"/>
+                      <rect x="244" y="10" width="8" height="8"/>
+                      <rect x="228" y="18" width="8" height="8"/>
+                      <rect x="244" y="18" width="8" height="8"/>
+                      <rect x="228" y="26" width="8" height="8"/>
+                      <rect x="236" y="26" width="8" height="8"/>
+                      <rect x="228" y="34" width="8" height="8"/>
+                      <rect x="244" y="34" width="8" height="8"/>
+                      <rect x="228" y="42" width="8" height="8"/>
+                      <rect x="244" y="42" width="8" height="8"/>
+                      
+                      {/* A */}
+                      <rect x="268" y="18" width="8" height="8"/>
+                      <rect x="276" y="10" width="8" height="8"/>
+                      <rect x="284" y="18" width="8" height="8"/>
+                      <rect x="268" y="26" width="8" height="8"/>
+                      <rect x="276" y="26" width="8" height="8"/>
+                      <rect x="284" y="26" width="8" height="8"/>
+                      <rect x="268" y="34" width="8" height="8"/>
+                      <rect x="284" y="34" width="8" height="8"/>
+                      <rect x="268" y="42" width="8" height="8"/>
+                      <rect x="284" y="42" width="8" height="8"/>
+                      
+                      {/* F */}
+                      <rect x="308" y="10" width="8" height="8"/>
+                      <rect x="316" y="10" width="8" height="8"/>
+                      <rect x="324" y="10" width="8" height="8"/>
+                      <rect x="308" y="18" width="8" height="8"/>
+                      <rect x="308" y="26" width="8" height="8"/>
+                      <rect x="316" y="26" width="8" height="8"/>
+                      <rect x="308" y="34" width="8" height="8"/>
+                      <rect x="308" y="42" width="8" height="8"/>
+                      
+                      {/* T */}
+                      <rect x="348" y="10" width="8" height="8"/>
+                      <rect x="356" y="10" width="8" height="8"/>
+                      <rect x="364" y="10" width="8" height="8"/>
+                      <rect x="356" y="18" width="8" height="8"/>
+                      <rect x="356" y="26" width="8" height="8"/>
+                      <rect x="356" y="34" width="8" height="8"/>
+                      <rect x="356" y="42" width="8" height="8"/>
+                    </g>
+                    
+                    {/* Row 2: S T U D I O */}
+                    <g fill="url(#logoGradient)" transform="translate(180, 0)">
+                      {/* S */}
+                      <rect x="220" y="70" width="8" height="8"/>
+                      <rect x="228" y="70" width="8" height="8"/>
+                      <rect x="236" y="70" width="8" height="8"/>
+                      <rect x="220" y="78" width="8" height="8"/>
+                      <rect x="228" y="86" width="8" height="8"/>
+                      <rect x="236" y="86" width="8" height="8"/>
+                      <rect x="236" y="94" width="8" height="8"/>
+                      <rect x="220" y="102" width="8" height="8"/>
+                      <rect x="228" y="102" width="8" height="8"/>
+                      <rect x="236" y="102" width="8" height="8"/>
+                      
+                      {/* T */}
+                      <rect x="260" y="70" width="8" height="8"/>
+                      <rect x="268" y="70" width="8" height="8"/>
+                      <rect x="276" y="70" width="8" height="8"/>
+                      <rect x="268" y="78" width="8" height="8"/>
+                      <rect x="268" y="86" width="8" height="8"/>
+                      <rect x="268" y="94" width="8" height="8"/>
+                      <rect x="268" y="102" width="8" height="8"/>
+                      
+                      {/* U */}
+                      <rect x="300" y="70" width="8" height="8"/>
+                      <rect x="316" y="70" width="8" height="8"/>
+                      <rect x="300" y="78" width="8" height="8"/>
+                      <rect x="316" y="78" width="8" height="8"/>
+                      <rect x="300" y="86" width="8" height="8"/>
+                      <rect x="316" y="86" width="8" height="8"/>
+                      <rect x="300" y="94" width="8" height="8"/>
+                      <rect x="316" y="94" width="8" height="8"/>
+                      <rect x="300" y="102" width="8" height="8"/>
+                      <rect x="308" y="102" width="8" height="8"/>
+                      <rect x="316" y="102" width="8" height="8"/>
+                      
+                      {/* D */}
+                      <rect x="340" y="70" width="8" height="8"/>
+                      <rect x="348" y="70" width="8" height="8"/>
+                      <rect x="356" y="70" width="8" height="8"/>
+                      <rect x="340" y="78" width="8" height="8"/>
+                      <rect x="364" y="78" width="8" height="8"/>
+                      <rect x="340" y="86" width="8" height="8"/>
+                      <rect x="364" y="86" width="8" height="8"/>
+                      <rect x="340" y="94" width="8" height="8"/>
+                      <rect x="364" y="94" width="8" height="8"/>
+                      <rect x="340" y="102" width="8" height="8"/>
+                      <rect x="348" y="102" width="8" height="8"/>
+                      <rect x="356" y="102" width="8" height="8"/>
+                      
+                      {/* I */}
+                      <rect x="388" y="70" width="8" height="8"/>
+                      <rect x="396" y="70" width="8" height="8"/>
+                      <rect x="404" y="70" width="8" height="8"/>
+                      <rect x="396" y="78" width="8" height="8"/>
+                      <rect x="396" y="86" width="8" height="8"/>
+                      <rect x="396" y="94" width="8" height="8"/>
+                      <rect x="388" y="102" width="8" height="8"/>
+                      <rect x="396" y="102" width="8" height="8"/>
+                      <rect x="404" y="102" width="8" height="8"/>
+                      
+                      {/* O */}
+                      <rect x="428" y="70" width="8" height="8"/>
+                      <rect x="436" y="70" width="8" height="8"/>
+                      <rect x="444" y="70" width="8" height="8"/>
+                      <rect x="428" y="78" width="8" height="8"/>
+                      <rect x="444" y="78" width="8" height="8"/>
+                      <rect x="428" y="86" width="8" height="8"/>
+                      <rect x="444" y="86" width="8" height="8"/>
+                      <rect x="428" y="94" width="8" height="8"/>
+                      <rect x="444" y="94" width="8" height="8"/>
+                      <rect x="428" y="102" width="8" height="8"/>
+                      <rect x="436" y="102" width="8" height="8"/>
+                      <rect x="444" y="102" width="8" height="8"/>
+                    </g>
+                    
+                    {/* Decorative elements */}
+                    <rect x="50" y="115" width="700" height="2" fill="url(#logoGradient)" opacity="0.4"/>
+                    <circle cx="80" cy="116" r="3" fill="#14B8A6" opacity="0.8"/>
+                    <circle cx="720" cy="116" r="3" fill="#14B8A6" opacity="0.8"/>
+                  </svg>
                 </div>
                 <p className="text-xl text-gray-700 dark:text-white/80 font-light tracking-tight">
                   Connect Claude Code. Build what you want. Deploy instantly.
